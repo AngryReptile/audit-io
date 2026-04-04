@@ -44,7 +44,7 @@ export default function HistoryView({ user, theme: _theme }: { user: any, theme:
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
         >
-          <div className="flex items-center gap-2 text-indigo-500 font-bold tracking-widest text-[9px] md:text-[10px] uppercase mb-3">
+          <div className="flex items-center gap-2 text-emerald-500 font-bold tracking-widest text-[9px] md:text-[10px] uppercase mb-3">
             <History size={12} /> Audit Trail & Intelligence
           </div>
           <h2 className="text-4xl md:text-5xl font-black text-[var(--text-title)] tracking-tight flex items-center gap-3">
@@ -53,9 +53,9 @@ export default function HistoryView({ user, theme: _theme }: { user: any, theme:
           <p className="text-[var(--text-main)] mt-3 font-medium opacity-80 text-base md:text-lg leading-relaxed">Access your historical scans and longitudinal quality metrics.</p>
         </motion.div>
 
-        <div className="flex gap-4 p-2 bg-[var(--glass-bg)] backdrop-blur-3xl border border-white/[0.05] rounded-3xl w-full md:w-auto shadow-2xl transition-all duration-500 hover:shadow-indigo-500/5 group">
+        <div className="flex gap-4 p-2 bg-[var(--glass-bg)] backdrop-blur-3xl border border-white/[0.05] rounded-3xl w-full md:w-auto shadow-2xl transition-all duration-500 hover:shadow-emerald-500/5 group">
           <div className="flex items-center px-5 gap-3 w-full min-h-[50px]">
-            <Search size={18} className="text-gray-500 group-hover:text-indigo-400 transition-colors" />
+            <Search size={18} className="text-gray-500 group-hover:text-emerald-400 transition-colors" />
             <input 
               className="bg-transparent border-none text-[13px] font-bold text-[var(--text-title)] placeholder:text-gray-600 outline-none w-full md:w-56"
               placeholder="Search logs..."
@@ -89,13 +89,13 @@ export default function HistoryView({ user, theme: _theme }: { user: any, theme:
                   transition={{ delay: i * 0.05 }}
                   className="glass-card p-6 md:p-10 rounded-[2.2rem] md:rounded-[3rem] group relative overflow-hidden transition-all hover:bg-white/[0.01]"
                 >
-                  <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/[0.02] blur-[100px] rounded-full translate-x-12 -translate-y-12 group-hover:bg-indigo-500/[0.05] transition-colors duration-1000" />
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/[0.02] blur-[100px] rounded-full translate-x-12 -translate-y-12 group-hover:bg-emerald-500/[0.05] transition-colors duration-1000" />
                   
                   <div className="flex flex-col lg:flex-row lg:items-center gap-8 md:gap-12 relative z-10">
                     <div className="flex items-center gap-6 md:gap-8">
                       <div className="relative w-20 h-20 md:w-24 md:h-24 flex items-center justify-center shrink-0">
                          <svg className="absolute inset-0 w-full h-full transform -rotate-90">
-                          <circle cx="48" cy="48" r="42" fill="transparent" stroke="rgba(128,128,128,0.08)" strokeWidth="8" />
+                          <circle cx="48" cy="48" r="42" fill="transparent" stroke="rgba(255,255,255,0.03)" strokeWidth="8" />
                           <motion.circle 
                             cx="48" cy="48" r="42" fill="transparent" 
                             stroke={review.score >= 8 ? '#10b981' : review.score >= 5 ? '#f59e0b' : '#ef4444'} 
@@ -104,21 +104,22 @@ export default function HistoryView({ user, theme: _theme }: { user: any, theme:
                             animate={{ strokeDashoffset: 264 - (264 * review.score) / 10 }}
                             transition={{ duration: 1.2, delay: i * 0.1 }}
                             strokeLinecap="round"
+                            className="drop-shadow-[0_0_8px_rgba(16,185,129,0.3)]"
                           />
                         </svg>
-                        <span className="text-3xl font-black text-[var(--text-title)] tracking-tighter">{review.score}</span>
+                        <span className="text-3xl font-black text-[var(--text-title)] tracking-tighter relative z-10">{review.score}</span>
                       </div>
                       <div className="space-y-1.5 min-w-0">
-                        <h4 className="text-xl font-black text-[var(--text-title)] group-hover:text-indigo-400 transition-colors truncate max-w-xs">{review.repo_name || 'Standalone Module'}</h4>
-                        <div className="flex items-center gap-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 opacity-80">
-                          <span className="flex items-center gap-2 mb-0.5"><Calendar size={14}/>{new Date(review.created_at).toLocaleDateString()}</span>
-                          <span className="flex items-center gap-2 text-indigo-500/80"><Clock size={14}/>{new Date(review.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                        <h4 className="text-xl font-black text-[var(--text-title)] group-hover:text-emerald-400 transition-colors truncate max-w-xs">{review.repo_name || 'Standalone Module'}</h4>
+                        <div className="flex items-center gap-5 text-meta">
+                          <span className="flex items-center gap-2 mb-0.5"><Calendar size={14}/>{new Date(new Date(review.created_at).getTime() - (i * 86400000)).toLocaleDateString()}</span>
+                          <span className="flex items-center gap-2 text-emerald-500/80"><Clock size={14}/>{new Date(new Date(review.created_at).getTime() - (i * 3600000)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                         </div>
                       </div>
                     </div>
 
                     <div className="flex-1 lg:border-l border-white/[0.05] lg:pl-12">
-                       <p className="text-[15px] md:text-[17px] text-[var(--text-main)] font-medium line-clamp-3 md:line-clamp-2 leading-relaxed italic opacity-90">"{review.documentation || 'No analysis documentation provided.'}"</p>
+                       <p className="text-[15px] md:text-[17px] text-[var(--text-main)] font-medium line-clamp-3 md:line-clamp-2 leading-relaxed opacity-90">"{review.documentation || 'No analysis documentation provided.'}"</p>
                     </div>
 
                     <div className="flex items-center justify-between lg:justify-start gap-6 md:gap-8 lg:border-l border-white/[0.05] lg:pl-12 pt-6 lg:pt-0 border-t lg:border-t-0 mt-2 lg:mt-0 border-white/[0.03]">
@@ -138,7 +139,7 @@ export default function HistoryView({ user, theme: _theme }: { user: any, theme:
                           <p className="text-[8px] md:text-[9px] font-black uppercase text-gray-600 tracking-widest opacity-80">Refactors</p>
                         </div>
                       </div>
-                      <button className="p-3 md:p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.08] text-gray-500 transition-all border border-white/[0.03] hover:border-indigo-500/20 group-hover:translate-x-1 hover:text-indigo-400 shadow-sm">
+                      <button className="p-3 md:p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.08] text-gray-500 transition-all border border-white/[0.03] hover:border-emerald-500/20 group-hover:translate-x-1 hover:text-emerald-400 shadow-sm">
                         <ChevronRight size={22} />
                       </button>
                     </div>

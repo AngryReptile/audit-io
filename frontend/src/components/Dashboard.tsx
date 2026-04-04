@@ -36,7 +36,7 @@ export default function Dashboard({ user, theme: _theme }: { user: any, theme: '
           <motion.div 
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-2 text-indigo-500 font-bold tracking-widest text-[9px] md:text-[10px] uppercase mb-4"
+            className="flex items-center gap-2 text-emerald-500 font-bold tracking-widest text-[9px] md:text-[10px] uppercase mb-4"
           >
             <Sparkles size={14} className="animate-pulse" /> System Intel active
           </motion.div>
@@ -46,10 +46,10 @@ export default function Dashboard({ user, theme: _theme }: { user: any, theme: '
       </header>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-        <StatCard label="Analyses" value={stats.totalReviews.toString()} icon={LayoutGrid} color="indigo" />
-        <StatCard label="Avg Score" value={stats.avgScore.toString()} icon={Sparkles} color="emerald" />
+        <StatCard label="Analyses" value={stats.totalReviews.toString()} icon={LayoutGrid} color="emerald" />
+        <StatCard label="Avg Score" value={stats.avgScore.toString()} icon={Sparkles} color="gold" />
         <StatCard label="Vulns Caught" value={stats.totalBugs.toString()} icon={Zap} color="rose" />
-        <StatCard label="Docs Built" value={stats.totalDocs.toString()} icon={History} color="blue" />
+        <StatCard label="Docs Built" value={stats.totalDocs.toString()} icon={History} color="amber" />
       </div>
 
       <motion.div 
@@ -57,12 +57,12 @@ export default function Dashboard({ user, theme: _theme }: { user: any, theme: '
         animate={{ opacity: 1, y: 0 }}
         className="relative group mt-8"
       >
-        <div className="glass-card rounded-[2.5rem] md:rounded-[3.5rem] p-8 md:p-16 overflow-hidden relative shadow-2xl transition-all duration-700 hover:shadow-indigo-500/5 group/card">
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/[0.03] blur-[120px] rounded-full translate-x-1/2 -translate-y-1/2 group-hover/card:bg-indigo-500/[0.07] transition-colors duration-1000" />
+        <div className="glass-card rounded-[2.5rem] md:rounded-[3.5rem] p-8 md:p-16 overflow-hidden relative shadow-2xl transition-all duration-700 hover:shadow-emerald-500/5 group/card">
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-500/[0.03] blur-[120px] rounded-full translate-x-1/2 -translate-y-1/2 group-hover/card:bg-emerald-500/[0.07] transition-colors duration-1000" />
           
           <div className="grid lg:grid-cols-2 gap-12 md:gap-20 items-center relative z-10">
             <div className="space-y-6 md:space-y-10">
-              <h2 className="text-4xl md:text-5xl font-black text-[var(--text-title)] leading-[1.1] tracking-tight">Initiate <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-violet-600">Deep Intelligence</span></h2>
+              <h2 className="text-4xl md:text-5xl font-black text-[var(--text-title)] leading-[1.1] tracking-tight">Initiate <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 via-teal-500 to-amber-600">Deep Intelligence</span></h2>
               <p className="text-[var(--text-main)] font-medium text-lg md:text-xl leading-relaxed max-w-lg opacity-90">Seamlessly audit public repositories or individual code blocks using Google's frontier AI models.</p>
               <div className="flex flex-col sm:flex-row gap-4 md:gap-6 pt-2">
                  <Link to="/repo" className="btn-primary py-5 md:py-6 px-8 rounded-2xl font-black text-[15px] flex items-center justify-center gap-3">
@@ -76,9 +76,9 @@ export default function Dashboard({ user, theme: _theme }: { user: any, theme: '
             
             <div className="hidden lg:flex justify-center select-none pointer-events-none">
               <div className="relative w-72 h-72 flex items-center justify-center">
-                <div className="absolute inset-0 bg-indigo-500/10 blur-[80px] rounded-full animate-pulse-subtle" />
-                <div className="absolute inset-0 bg-purple-500/10 blur-[100px] rounded-full mix-blend-screen" />
-                <Zap size={140} className="text-indigo-500 relative z-10 animate-float opacity-80" />
+                <div className="absolute inset-0 bg-emerald-500/10 blur-[80px] rounded-full animate-pulse-subtle" />
+                <div className="absolute inset-0 bg-amber-500/10 blur-[100px] rounded-full mix-blend-screen" />
+                <Zap size={140} className="text-emerald-500 relative z-10 animate-float opacity-80" />
               </div>
             </div>
           </div>
@@ -88,12 +88,12 @@ export default function Dashboard({ user, theme: _theme }: { user: any, theme: '
   );
 }
 
-function StatCard({ label, value, icon: Icon, color }: { label: string, value: string, icon: any, color: 'indigo'|'emerald'|'rose'|'blue' }) {
+function StatCard({ label, value, icon: Icon, color }: { label: string, value: string, icon: any, color: 'emerald'|'gold'|'rose'|'amber' }) {
   const colors = {
-    indigo: 'text-indigo-400 border-indigo-500/10 hover:border-indigo-500/30',
-    emerald: 'text-emerald-400 border-emerald-500/10 hover:border-emerald-500/30',
-    rose: 'text-rose-400 border-rose-500/10 hover:border-rose-500/30',
-    blue: 'text-blue-400 border-blue-500/10 hover:border-blue-500/30'
+    emerald: 'text-emerald-400 border-emerald-500/10 hover:border-emerald-500/30 shadow-emerald-500/5',
+    gold: 'text-amber-400 border-amber-500/10 hover:border-amber-500/30 shadow-amber-500/5',
+    rose: 'text-rose-400 border-rose-500/10 hover:border-rose-500/30 shadow-rose-500/5',
+    amber: 'text-amber-500 border-orange-500/10 hover:border-orange-500/30 shadow-orange-500/5'
   };
 
   return (

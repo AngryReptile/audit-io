@@ -11,6 +11,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { DashboardSkeleton, PageTransition } from './components/Skeletons';
 import LoginView from './components/LoginView';
 import Dashboard from './components/Dashboard';
+import { ReviewProvider } from './context/ReviewContext';
 
 // Lazy Load Heavy Components
 const ManualReview = lazy(() => import('./components/ManualReview'));
@@ -40,7 +41,7 @@ export default function App() {
 
   const handleLoginSuccess = async (response: any) => {
     try {
-      const { data } = await axios.post('/api/auth/google', {
+      const { data } = await axios.post(`${import.meta.env.VITE_API_BASE}/api/auth/google`, {
         token: response.credential
       });
       if (data.success) {
@@ -52,6 +53,19 @@ export default function App() {
       const msg = err.response?.data?.error || err.message || 'Authentication error';
       alert(`Login failed: ${msg}`);
     }
+  };
+
+  const handleDemoLogin = () => {
+    const mockUser = {
+      id: 0,
+      google_id: 'demo_user_123',
+      email: 'demo@audit.io',
+      name: 'Demo Architect',
+      avatar: `https://ui-avatars.com/api/?name=Demo+Architect&background=10b981&color=fff`,
+      role: 'admin'
+    };
+    setUser(mockUser);
+    localStorage.setItem('user', JSON.stringify(mockUser));
   };
 
   const logout = () => {
@@ -66,7 +80,7 @@ export default function App() {
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
       <Router>
         {!user ? (
-          <LoginView onLogin={handleLoginSuccess} theme={theme} />
+          <LoginView onLogin={handleLoginSuccess} onDemoLogin={handleDemoLogin} theme={theme} />
         ) : (
           <AppContent user={user} logout={logout} theme={theme} toggleTheme={toggleTheme} />
         )}
@@ -98,14 +112,22 @@ function AppContent({ user, logout, theme, toggleTheme }: { user: any, logout: (
   }, [location]);
 
   return (
-    <div className="flex flex-col md:flex-row h-screen bg-[var(--bg-page)] text-[var(--text-main)] font-sans selection:bg-indigo-500/30 overflow-hidden relative transition-colors duration-500">
-      <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-indigo-900/10 blur-[120px] rounded-full animate-float pointer-events-none" />
-      <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-900/10 blur-[120px] rounded-full animate-float-delayed pointer-events-none" />
+    <div className="flex flex-col md:flex-row h-screen bg-[var(--bg-page)] text-[var(--text-main)] font-sans selection:bg-emerald-500/30 overflow-hidden relative transition-colors duration-500">
+      {/* Premium Background System */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <div className="absolute inset-0 bg-mesh-gradient opacity-80" />
+        <div className="absolute inset-0 bg-noise opacity-100" />
+        
+        {/* Dynamic Animated Blobs */}
+        <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-emerald-500/10 blur-[120px] rounded-full animate-float" />
+        <div className="absolute bottom-[-5%] left-[-5%] w-[50%] h-[50%] bg-amber-500/10 blur-[120px] rounded-full animate-float-delayed" />
+        <div className="absolute top-[20%] left-[10%] w-[35%] h-[35%] bg-emerald-600/10 blur-[100px] rounded-full animate-pulse-slow" />
+      </div>
       
       {/* Mobile Header */}
       <div className="md:hidden flex items-center justify-between p-6 bg-[var(--sidebar-bg)] backdrop-blur-3xl border-b border-white/[0.05] z-50">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg ring-1 ring-white/10">
+          <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-amber-600 rounded-lg flex items-center justify-center shadow-lg ring-1 ring-white/10">
             <Zap className="text-white fill-white" size={14} />
           </div>
           <h1 className="text-sm font-black text-[var(--text-title)] tracking-tighter">Audit.io</h1>
@@ -118,31 +140,33 @@ function AppContent({ user, logout, theme, toggleTheme }: { user: any, logout: (
         </button>
       </div>
 
-      <Sidebar 
-        user={user} 
-        logout={logout} 
-        isOpen={isSidebarOpen} 
-        setIsOpen={setIsSidebarOpen} 
-        theme={theme} 
-        toggleTheme={toggleTheme}
-        isMobileOpen={isMobileMenuOpen}
-        setIsMobileOpen={setIsMobileMenuOpen}
-      />
-      
-      <main className="flex-1 overflow-y-auto px-6 md:px-12 py-8 md:py-10 relative z-10 custom-scrollbar">
-         <AnimatePresence mode="wait">
-            <Suspense fallback={<DashboardSkeleton />}>
-              <Routes location={location} key={location.pathname}>
-                <Route path="/" element={<PageTransition><Dashboard user={user} theme={theme} /></PageTransition>} />
-                <Route path="/manual" element={<PageTransition><ManualReview user={user} theme={theme} /></PageTransition>} />
-                <Route path="/repo" element={<PageTransition><RepoReview user={user} theme={theme} /></PageTransition>} />
-                <Route path="/history" element={<PageTransition><HistoryView user={user} theme={theme} /></PageTransition>} />
-                <Route path="/admin" element={user.role === 'admin' ? <PageTransition><AdminPanel user={user} theme={theme} /></PageTransition> : <Navigate to="/" />} />
-                <Route path="*" element={<Navigate to="/" />} />
-              </Routes>
-            </Suspense>
-         </AnimatePresence>
-      </main>
+      <ReviewProvider>
+        <Sidebar 
+          user={user} 
+          logout={logout} 
+          isOpen={isSidebarOpen} 
+          setIsOpen={setIsSidebarOpen} 
+          theme={theme} 
+          toggleTheme={toggleTheme}
+          isMobileOpen={isMobileMenuOpen}
+          setIsMobileOpen={setIsMobileMenuOpen}
+        />
+        
+        <main className="flex-1 overflow-y-auto px-6 md:px-12 py-8 md:py-10 relative z-10 custom-scrollbar">
+           <AnimatePresence mode="wait">
+              <Suspense fallback={<DashboardSkeleton />}>
+                <Routes location={location} key={location.pathname}>
+                  <Route path="/" element={<PageTransition><Dashboard user={user} theme={theme} /></PageTransition>} />
+                  <Route path="/manual" element={<PageTransition><ManualReview user={user} theme={theme} /></PageTransition>} />
+                  <Route path="/repo" element={<PageTransition><RepoReview user={user} theme={theme} /></PageTransition>} />
+                  <Route path="/history" element={<PageTransition><HistoryView user={user} theme={theme} /></PageTransition>} />
+                  <Route path="/admin" element={user.role === 'admin' ? <PageTransition><AdminPanel user={user} theme={theme} /></PageTransition> : <Navigate to="/" />} />
+                  <Route path="*" element={<Navigate to="/" />} />
+                </Routes>
+              </Suspense>
+           </AnimatePresence>
+        </main>
+      </ReviewProvider>
     </div>
   );
 }
@@ -182,15 +206,15 @@ function Sidebar({ user, logout, isOpen, setIsOpen, theme, toggleTheme, isMobile
           width: isOpen ? '280px' : '90px',
           x: (window.innerWidth < 768 && !isMobileOpen) ? -280 : 0
         }}
-        className={`fixed md:relative z-[60] h-full transition-all duration-500 ease-[0.23,1,0.32,1] bg-[var(--sidebar-bg)] backdrop-blur-3xl flex flex-col p-6 border-r border-white/5 md:border-none shadow-2xl md:shadow-none`}
+        className={`fixed md:relative z-[60] h-full transition-all duration-500 ease-[0.23,1,0.32,1] bg-transparent backdrop-blur-3xl flex flex-col p-6 border-r border-white/5 md:border-none shadow-2xl md:shadow-none`}
       >
         <div className="flex items-center gap-4 mb-14 overflow-hidden px-2">
-          <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-xl shadow-indigo-500/10 ring-1 ring-white/10 shrink-0 rotate-3">
+          <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-amber-600 rounded-xl flex items-center justify-center shadow-xl shadow-emerald-500/10 ring-1 ring-white/10 shrink-0 rotate-3">
             <Zap className="text-white fill-white" size={20} />
           </div>
           <div className={`transition-opacity duration-300 ${(isOpen || isMobileOpen) ? 'opacity-100' : 'opacity-0'}`}>
             <h1 className="text-lg font-black text-[var(--text-title)] tracking-tighter leading-none">Audit.io</h1>
-            <span className="text-[10px] font-black text-indigo-400/80 uppercase tracking-widest mt-0.5 inline-block">Enterprise v2.0</span>
+            <span className="text-[10px] font-black text-emerald-400/80 uppercase tracking-widest mt-0.5 inline-block">Enterprise v2.0</span>
           </div>
         </div>
 
@@ -203,16 +227,16 @@ function Sidebar({ user, logout, isOpen, setIsOpen, theme, toggleTheme, isMobile
                 key={item.path} 
                 to={item.path}
                 className={`flex items-center justify-between p-3.5 rounded-xl transition-all relative group ${
-                  isActive ? 'bg-indigo-600/10 text-indigo-400' : 'text-gray-500 hover:text-[var(--text-title)]'
+                  isActive ? 'bg-emerald-600/10 text-emerald-400' : 'text-gray-500 hover:text-[var(--text-title)]'
                 }`}
               >
                 <div className="flex items-center gap-4">
-                  <item.icon size={18} className={isActive ? 'text-indigo-400' : 'text-gray-500 group-hover:text-indigo-400 transition-colors'} />
+                  <item.icon size={18} className={isActive ? 'text-emerald-400' : 'text-gray-500 group-hover:text-emerald-400 transition-colors'} />
                   <span className={`font-bold text-[13px] tracking-tight transition-all duration-300 ${showLabel ? 'opacity-100' : 'opacity-0 h-0 hidden'}`}>
                     {item.label}
                   </span>
                 </div>
-                {isActive && showLabel && <div className="w-1 h-4 bg-indigo-500 rounded-full" />}
+                {isActive && showLabel && <div className="w-1 h-4 bg-emerald-500 rounded-full" />}
               </Link>
             );
           })}
@@ -221,13 +245,13 @@ function Sidebar({ user, logout, isOpen, setIsOpen, theme, toggleTheme, isMobile
         <div className="mt-auto space-y-4">
           <button 
             onClick={toggleTheme}
-            className="w-full flex items-center justify-between p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.03] hover:border-indigo-500/20 transition-all group"
+            className="w-full flex items-center justify-between p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.03] hover:border-emerald-500/20 transition-all group"
           >
             <div className="flex items-center gap-4">
               {theme === 'dark' ? (
                 <Sun size={18} className="text-amber-400 group-hover:rotate-45 transition-transform" />
               ) : (
-                <Moon size={18} className="text-indigo-400 group-hover:-rotate-12 transition-transform" />
+                <Moon size={18} className="text-emerald-400 group-hover:-rotate-12 transition-transform" />
               )}
               <span className={`font-bold text-[11px] uppercase tracking-widest transition-opacity duration-300 ${(isOpen || isMobileOpen) ? 'opacity-100' : 'opacity-0 h-0 hidden'}`}>
                 {theme === 'dark' ? 'Crystal' : 'Luminous'}
@@ -235,7 +259,7 @@ function Sidebar({ user, logout, isOpen, setIsOpen, theme, toggleTheme, isMobile
             </div>
           </button>
 
-          <div className="p-3 bg-white/[0.03] rounded-2xl border border-white/[0.02] hover:border-indigo-500/20 transition-all cursor-pointer group">
+          <div className="p-3 bg-white/[0.03] rounded-2xl border border-white/[0.02] hover:border-emerald-500/20 transition-all cursor-pointer group">
              <div className="flex items-center gap-3 relative z-10 transition-transform group-hover:scale-[1.01]">
                <img 
                  src={user.avatar} 

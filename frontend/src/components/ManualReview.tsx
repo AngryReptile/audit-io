@@ -3,12 +3,15 @@ import axios from 'axios';
 import { Terminal, Copy, Play, Loader2, Sparkles, AlertTriangle, CheckCircle, Hash } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactDiffViewer from 'react-diff-viewer-continued';
+import { useReviewContext } from '../context/ReviewContext';
 
 export default function ManualReview({ user, theme }: { user: any, theme: 'light' | 'dark' }) {
-  const [code, setCode] = useState('');
+  const { 
+    manualCode: code, setManualCode: setCode, 
+    manualResult: result, setManualResult: setResult, 
+    manualSplitView: splitView, setManualSplitView: setSplitView 
+  } = useReviewContext();
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<any>(null);
-  const [splitView, setSplitView] = useState(false);
 
   const handleReview = async () => {
     if (!code) return;
@@ -33,7 +36,7 @@ export default function ManualReview({ user, theme }: { user: any, theme: 'light
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
         >
-          <div className="flex items-center gap-2 text-indigo-500 font-bold tracking-widest text-[9px] md:text-[10px] uppercase mb-3">
+          <div className="flex items-center gap-2 text-emerald-500 font-bold tracking-widest text-[9px] md:text-[10px] uppercase mb-3">
             <Terminal size={12} /> Live Analysis Engine
           </div>
           <h2 className="text-4xl md:text-5xl font-black text-[var(--text-title)] tracking-tight flex items-center gap-3">
@@ -68,11 +71,11 @@ export default function ManualReview({ user, theme }: { user: any, theme: 'light
           className="flex flex-col space-y-4 h-full xl:w-1/2"
         >
           <div className="glass-card rounded-[2.2rem] md:rounded-[2.8rem] p-6 md:p-10 flex-1 flex flex-col relative overflow-hidden group min-h-[400px]">
-            <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-500/[0.02] blur-[100px] rounded-full" />
+            <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/[0.02] blur-[100px] rounded-full" />
             
             <div className="flex justify-between items-center mb-8 relative z-10">
               <div className="flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Autonomous Detection Active</span>
               </div>
               <button 
@@ -113,8 +116,8 @@ export default function ManualReview({ user, theme }: { user: any, theme: 'light
                 exit={{ opacity: 0 }}
                 className="h-full flex flex-col items-center justify-center text-center p-12 opacity-20 select-none grayscale"
               >
-                <div className="p-12 rounded-[4rem] bg-indigo-500/[0.03] mb-8 border border-indigo-500/[0.05]">
-                  <Terminal size={100} className="text-indigo-400" />
+                <div className="p-12 rounded-[4rem] bg-emerald-500/[0.03] mb-8 border border-emerald-500/[0.05]">
+                  <Terminal size={100} className="text-emerald-400" />
                 </div>
                 <h3 className="text-2xl font-black text-[var(--text-title)] mb-3 italic tracking-tight">Idle State</h3>
                 <p className="max-w-xs font-medium text-[var(--text-main)] text-lg">Input your source code to initiate a world-class security assessment.</p>
@@ -129,11 +132,11 @@ export default function ManualReview({ user, theme }: { user: any, theme: 'light
                 className="h-full flex flex-col items-center justify-center py-20"
               >
                 <div className="relative w-28 h-28 mb-10">
-                  <div className="absolute inset-0 border-[5px] border-indigo-500/10 rounded-full" />
-                  <div className="absolute inset-0 border-[5px] border-t-indigo-500 rounded-full animate-spin" />
-                  <Sparkles className="absolute inset-0 m-auto text-indigo-500 animate-pulse" size={36} />
+                  <div className="absolute inset-0 border-[5px] border-emerald-500/10 rounded-full" />
+                  <div className="absolute inset-0 border-[5px] border-t-emerald-500 rounded-full animate-spin" />
+                  <Sparkles className="absolute inset-0 m-auto text-emerald-500 animate-pulse" size={36} />
                 </div>
-                <p className="text-indigo-500 font-black uppercase tracking-[0.5em] text-[11px] opacity-80">Pipeline Active</p>
+                <p className="text-emerald-500 font-black uppercase tracking-[0.5em] text-[11px] opacity-80">Pipeline Active</p>
               </motion.div>
             )}
 
@@ -169,10 +172,10 @@ export default function ManualReview({ user, theme }: { user: any, theme: 'light
                     <div className="flex-1">
                        <div className="flex items-center justify-between mb-4">
                          <h4 className="text-2xl font-black text-[var(--text-title)] flex items-center gap-3 tracking-tight">
-                           <Sparkles className="text-indigo-500" size={22} /> Executive Summary
+                           <Sparkles className="text-emerald-500" size={22} /> Executive Summary
                          </h4>
                          {result.detectedLanguage && (
-                           <span className="px-4 py-1.5 rounded-full bg-indigo-500/10 text-indigo-400 text-[10px] font-black uppercase tracking-widest border border-indigo-500/20 shadow-lg">
+                           <span className="px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-black uppercase tracking widest border border-emerald-500/20 shadow-lg">
                              Identified: {result.detectedLanguage}
                            </span>
                          )}
@@ -230,7 +233,7 @@ export default function ManualReview({ user, theme }: { user: any, theme: 'light
                             initial={{ opacity: 0, scale: 0.98 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: i * 0.15 }}
-                            className="glass-card rounded-[2.5rem] overflow-hidden shadow-2xl transition-all hover:border-indigo-500/10"
+                            className="glass-card rounded-[2.5rem] overflow-hidden shadow-2xl transition-all hover:border-emerald-500/10"
                           >
                             <div className="p-10 border-b border-white/[0.03] bg-white/[0.01]">
                               <p className="text-[17px] text-[var(--text-title)] font-bold leading-relaxed">{sugg.description}</p>

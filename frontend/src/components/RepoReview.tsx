@@ -6,15 +6,19 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactDiffViewer from 'react-diff-viewer-continued';
+import { useReviewContext } from '../context/ReviewContext';
 
 export default function RepoReview({ user, theme }: { user: any, theme: 'light' | 'dark' }) {
-  const [repoUrl, setRepoUrl] = useState('');
+  const {
+    repoUrl, setRepoUrl,
+    repoFiles: files, setRepoFiles: setFiles,
+    repoSelectedFile: selectedFile, setRepoSelectedFile: setSelectedFile,
+    repoResult: result, setRepoResult: setResult,
+    repoSplitView: splitView, setRepoSplitView: setSplitView
+  } = useReviewContext();
+
   const [loading, setLoading] = useState(false);
   const [analyzeLoading, setAnalyzeLoading] = useState(false);
-  const [files, setFiles] = useState<any[]>([]);
-  const [selectedFile, setSelectedFile] = useState<any>(null);
-  const [result, setResult] = useState<any>(null);
-  const [splitView, setSplitView] = useState(false);
 
   const fetchRepo = async () => {
     if (!repoUrl) return;
@@ -56,7 +60,7 @@ export default function RepoReview({ user, theme }: { user: any, theme: 'light' 
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
         >
-          <div className="flex items-center gap-2 text-indigo-500 font-bold tracking-widest text-[9px] md:text-[10px] uppercase mb-3">
+          <div className="flex items-center gap-2 text-emerald-500 font-bold tracking-widest text-[9px] md:text-[10px] uppercase mb-3">
             <GitBranch size={12} /> Remote Repository Auditor
           </div>
           <h2 className="text-4xl md:text-5xl font-black text-[var(--text-title)] tracking-tight flex items-center gap-3">
@@ -116,7 +120,7 @@ export default function RepoReview({ user, theme }: { user: any, theme: 'light' 
           className="lg:w-1/3 xl:w-1/4 glass-card rounded-[2.2rem] md:rounded-[2.8rem] flex flex-col shadow-2xl overflow-hidden relative group min-h-[400px] lg:h-auto"
         >
           <div className="p-8 border-b border-white/[0.03] bg-white/[0.01] flex items-center justify-between">
-            <span className="text-[10px] font-black uppercase tracking-widest text-indigo-500">Source Tree</span>
+            <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500">Source Tree</span>
             <span className="text-[10px] font-bold text-gray-500 tracking-tighter opacity-80">{files.length} modules</span>
           </div>
           
@@ -128,7 +132,7 @@ export default function RepoReview({ user, theme }: { user: any, theme: 'light' 
                   animate={{ opacity: 1 }}
                   className="h-full flex flex-col items-center justify-center text-center p-10 opacity-10 grayscale"
                 >
-                  <Folder size={60} className="mb-6 text-indigo-400" />
+                  <Folder size={60} className="mb-6 text-emerald-400" />
                   <p className="text-xs font-black uppercase tracking-[0.3em]">System Standby</p>
                 </motion.div>
               )}
@@ -149,10 +153,10 @@ export default function RepoReview({ user, theme }: { user: any, theme: 'light' 
                   transition={{ delay: i * 0.03 }}
                   onClick={() => analyzeFile(file)}
                   className={`w-full flex items-center gap-4 p-4 rounded-2xl transition-all group ${
-                    selectedFile?.path === file.path ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20' : 'text-gray-500 hover:bg-white/[0.03] hover:text-[var(--text-title)]'
+                    selectedFile?.path === file.path ? 'bg-emerald-600/10 text-emerald-400 border border-emerald-500/20' : 'text-gray-500 hover:bg-white/[0.03] hover:text-[var(--text-title)]'
                   }`}
                 >
-                  <FileCode size={20} className={selectedFile?.path === file.path ? 'text-indigo-400' : 'opacity-40 group-hover:opacity-100 transition-opacity'} />
+                  <FileCode size={20} className={selectedFile?.path === file.path ? 'text-emerald-400' : 'opacity-40 group-hover:opacity-100 transition-opacity'} />
                   <span className="text-[13px] font-bold truncate flex-1 text-left tracking-tight">{file.name}</span>
                   <ChevronRight size={16} className={`opacity-0 group-hover:opacity-100 transition-opacity ${selectedFile?.path === file.path ? 'opacity-100' : ''}`} />
                 </motion.button>
@@ -169,8 +173,8 @@ export default function RepoReview({ user, theme }: { user: any, theme: 'light' 
                 animate={{ opacity: 1 }}
                 className="h-full flex flex-col items-center justify-center text-center p-12 opacity-20 select-none grayscale"
               >
-                <div className="p-12 rounded-[4rem] bg-indigo-500/[0.03] mb-8 border border-indigo-500/[0.05]">
-                  <GitBranch size={100} className="text-indigo-400" />
+                <div className="p-12 rounded-[4rem] bg-emerald-500/[0.03] mb-8 border border-emerald-500/[0.05]">
+                  <GitBranch size={100} className="text-emerald-400" />
                 </div>
                 <h3 className="text-2xl font-black text-[var(--text-title)] mb-3 italic tracking-tight">Access Point Required</h3>
                 <p className="max-w-xs font-medium text-[var(--text-main)] text-lg">Select a critical module from the tree to begin structural analysis.</p>
@@ -184,11 +188,11 @@ export default function RepoReview({ user, theme }: { user: any, theme: 'light' 
                 className="h-full flex flex-col items-center justify-center py-20"
               >
                  <div className="relative w-28 h-28 mb-10">
-                  <div className="absolute inset-0 border-[5px] border-indigo-500/10 rounded-full" />
-                  <div className="absolute inset-0 border-[5px] border-t-indigo-500 rounded-full animate-spin" />
-                  <Sparkles className="absolute inset-0 m-auto text-indigo-500 animate-pulse" size={36} />
+                  <div className="absolute inset-0 border-[5px] border-emerald-500/10 rounded-full" />
+                  <div className="absolute inset-0 border-[5px] border-t-emerald-500 rounded-full animate-spin" />
+                  <Sparkles className="absolute inset-0 m-auto text-emerald-500 animate-pulse" size={36} />
                 </div>
-                <p className="text-indigo-500 font-black uppercase tracking-[0.5em] text-[11px] opacity-80">Benchmarking Data</p>
+                <p className="text-emerald-500 font-black uppercase tracking-[0.5em] text-[11px] opacity-80">Benchmarking Data</p>
               </motion.div>
             ) : result && (
               <motion.div 
@@ -219,10 +223,10 @@ export default function RepoReview({ user, theme }: { user: any, theme: 'light' 
                     <div className="flex-1">
                        <div className="flex items-center justify-between mb-4">
                          <h4 className="text-2xl font-black text-[var(--text-title)] flex items-center gap-3 tracking-tight">
-                           <Sparkles className="text-indigo-500" size={22} /> Executive Summary
+                           <Sparkles className="text-emerald-500" size={22} /> Executive Summary
                          </h4>
                          {result.detectedLanguage && (
-                           <span className="px-4 py-1.5 rounded-full bg-indigo-500/10 text-indigo-400 text-[10px] font-black uppercase tracking-widest border border-indigo-500/20 shadow-lg">
+                           <span className="px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-black uppercase tracking-widest border border-emerald-500/20 shadow-lg">
                              Identified: {result.detectedLanguage}
                            </span>
                          )}
@@ -278,7 +282,7 @@ export default function RepoReview({ user, theme }: { user: any, theme: 'light' 
                             initial={{ opacity: 0, scale: 0.98 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: i * 0.15 }}
-                            className="glass-card rounded-[2.5rem] overflow-hidden shadow-2xl transition-all hover:border-indigo-500/10"
+                            className="glass-card rounded-[2.5rem] overflow-hidden shadow-2xl transition-all hover:border-emerald-500/10"
                           >
                             <div className="p-10 border-b border-white/[0.03] bg-white/[0.01]">
                               <p className="text-[17px] text-[var(--text-title)] font-bold leading-relaxed">{sugg.description}</p>

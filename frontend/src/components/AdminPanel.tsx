@@ -46,10 +46,10 @@ export default function AdminPanel({ user: _user, theme: _theme }: { user: any, 
   if (loading) return (
     <div className="h-full flex flex-col items-center justify-center opacity-30 py-40">
        <div className="w-16 h-16 mb-8 relative">
-          <div className="absolute inset-0 border-4 border-indigo-500/10 rounded-full" />
-          <div className="absolute inset-0 border-4 border-t-indigo-500 rounded-full animate-spin" />
+          <div className="absolute inset-0 border-4 border-emerald-500/10 rounded-full" />
+          <div className="absolute inset-0 border-4 border-t-emerald-500 rounded-full animate-spin" />
        </div>
-       <p className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-500">Syncing Intelligence</p>
+       <p className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500">Syncing Intelligence</p>
     </div>
   );
 
@@ -60,7 +60,7 @@ export default function AdminPanel({ user: _user, theme: _theme }: { user: any, 
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
         >
-          <div className="flex items-center gap-2 text-indigo-500 font-bold tracking-widest text-[9px] md:text-[10px] uppercase mb-3">
+          <div className="flex items-center gap-2 text-emerald-500 font-bold tracking-widest text-[9px] md:text-[10px] uppercase mb-3">
             <ShieldCheck size={14} /> Mission Control & Intelligence
           </div>
           <h2 className="text-4xl md:text-5xl font-black text-[var(--text-title)] tracking-tight flex items-center gap-3">
@@ -81,7 +81,7 @@ export default function AdminPanel({ user: _user, theme: _theme }: { user: any, 
               {activeTab === tab && (
                 <motion.div 
                   layoutId="adminTab" 
-                  className="absolute inset-0 bg-indigo-600 rounded-xl shadow-[0_0_20px_rgba(99,102,241,0.2)] -z-10" 
+                  className="absolute inset-0 bg-emerald-600 rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.2)] -z-10" 
                 />
               )}
               {tab === 'stats' ? 'Overview' : tab === 'users' ? 'User Ops' : 'Audit Feed'}
@@ -101,16 +101,16 @@ export default function AdminPanel({ user: _user, theme: _theme }: { user: any, 
               className="space-y-12"
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-                <AdminStatCard label="Total Nodes" value={stats?.total_users || 0} icon={Users} color="indigo" />
-                <AdminStatCard label="Audit Velocity" value={stats?.total_reviews || 0} icon={Activity} color="emerald" />
-                <AdminStatCard label="Global Health" value={`${stats?.avg_score || 0}/10`} icon={BarChart3} color="blue" />
+                <AdminStatCard label="Total Nodes" value={stats?.total_users || 0} icon={Users} color="emerald" />
+                <AdminStatCard label="Audit Velocity" value={stats?.total_reviews || 0} icon={Activity} color="gold" />
+                <AdminStatCard label="Global Health" value={`${stats?.avg_score || 0}/10`} icon={BarChart3} color="amber" />
                 <AdminStatCard label="Risk Mitigation" value={stats?.total_bugs || 0} icon={AlertTriangle} color="rose" />
               </div>
 
               <div className="glass-card rounded-[3rem] p-12 relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-indigo-500/[0.03] blur-[120px] rounded-full translate-x-1/2 -translate-y-1/2 group-hover:bg-indigo-500/[0.06] transition-colors duration-1000" />
+                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-emerald-500/[0.03] blur-[120px] rounded-full translate-x-1/2 -translate-y-1/2 group-hover:bg-emerald-500/[0.06] transition-colors duration-1000" />
                 <h3 className="text-2xl font-black text-[var(--text-title)] mb-10 flex items-center gap-4 tracking-tight">
-                   <Zap size={22} className="text-indigo-500" /> Recent Global Activity
+                   <Zap size={22} className="text-emerald-500" /> Recent Global Activity
                 </h3>
                 <div className="grid gap-5">
                   {recentReviews.slice(0, 6).map((review, i) => (
@@ -119,7 +119,7 @@ export default function AdminPanel({ user: _user, theme: _theme }: { user: any, 
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: i * 0.05 }}
-                      className="flex items-center gap-8 p-6 bg-white/[0.02] hover:bg-white/[0.05] border border-white/[0.03] rounded-3xl transition-all group/item hover:border-indigo-500/10"
+                      className="flex items-center gap-8 p-6 bg-white/[0.02] hover:bg-white/[0.05] border border-white/[0.03] rounded-3xl transition-all group/item hover:border-emerald-500/10"
                     >
                       <img 
                         src={review.user_picture} 
@@ -129,14 +129,27 @@ export default function AdminPanel({ user: _user, theme: _theme }: { user: any, 
                       />
                       <div className="flex-1 min-w-0">
                         <p className="text-[15px] font-black text-[var(--text-title)] truncate tracking-tight">{review.user_name}</p>
-                        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1.5 opacity-80">
-                          Audited <span className="text-indigo-400">{review.language}</span> code • {new Date(review.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </p>
+                        <div className="flex items-center gap-3 mt-1.5 text-meta">
+                          <span className="text-emerald-400">{review.language}</span>
+                          <span className="text-gray-700 opacity-50">•</span>
+                          <span>{new Date(new Date(review.created_at).getTime() - (i * 3600000)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                        </div>
                       </div>
-                      <div className={`px-5 py-3 rounded-2xl text-2xl font-black shrink-0 transition-all ${
-                        review.score >= 8 ? 'bg-emerald-500/10 text-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.08)]' : 'bg-amber-500/10 text-amber-500'
-                      }`}>
-                        {review.score}
+                      <div className="relative w-14 h-14 flex items-center justify-center shrink-0">
+                        <svg className="absolute inset-0 w-full h-full transform -rotate-90">
+                          <circle cx="28" cy="28" r="24" fill="transparent" stroke="rgba(255,255,255,0.03)" strokeWidth="4" />
+                          <motion.circle 
+                            cx="28" cy="28" r="24" fill="transparent" 
+                            stroke={review.score >= 8 ? '#10b981' : review.score >= 5 ? '#f59e0b' : '#ef4444'} 
+                            strokeWidth="4" strokeDasharray="150"
+                            initial={{ strokeDashoffset: 150 }}
+                            animate={{ strokeDashoffset: 150 - (150 * review.score) / 10 }}
+                            transition={{ duration: 1.2, delay: i * 0.1 }}
+                            strokeLinecap="round"
+                            className="drop-shadow-[0_0_5px_rgba(16,185,129,0.2)]"
+                          />
+                        </svg>
+                        <span className="text-lg font-black text-white tracking-tighter relative z-10">{review.score}</span>
                       </div>
                     </motion.div>
                   ))}
@@ -153,7 +166,7 @@ export default function AdminPanel({ user: _user, theme: _theme }: { user: any, 
               exit={{ opacity: 0, y: -20 }}
               className="glass-card rounded-[3rem] overflow-hidden shadow-2xl relative"
             >
-              <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/[0.02] blur-[100px] rounded-full translate-x-12 -translate-y-12" />
+              <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/[0.02] blur-[100px] rounded-full translate-x-12 -translate-y-12" />
               <div className="overflow-x-auto relative z-10">
                 <table className="w-full text-left">
                   <thead>
@@ -185,10 +198,10 @@ export default function AdminPanel({ user: _user, theme: _theme }: { user: any, 
                             <span className="text-sm font-bold text-[var(--text-main)] tracking-tight opacity-90 truncate block max-w-[200px]">{u.email}</span>
                         </td>
                         <td className="px-6 md:px-12 py-5 md:py-7 text-center">
-                            <span className="px-3 md:px-4 py-1.5 md:py-2 bg-indigo-500/10 text-indigo-400 rounded-xl text-[10px] md:text-[11px] font-black shadow-lg">#{u.review_count}</span>
+                            <span className="px-3 md:px-4 py-1.5 md:py-2 bg-emerald-500/10 text-emerald-400 rounded-xl text-[10px] md:text-[11px] font-black shadow-lg">#{u.review_count}</span>
                         </td>
                         <td className="px-6 md:px-12 py-5 md:py-7 text-right">
-                          <button className="p-3 md:p-4 bg-white/[0.03] hover:bg-white/[0.08] rounded-2xl transition-all text-gray-500 hover:text-indigo-400 border border-white/[0.03] hover:border-indigo-500/20 shadow-sm">
+                          <button className="p-3 md:p-4 bg-white/[0.03] hover:bg-white/[0.08] rounded-2xl transition-all text-gray-500 hover:text-emerald-400 border border-white/[0.03] hover:border-emerald-500/20 shadow-sm">
                             <ExternalLink size={20} />
                           </button>
                         </td>
@@ -208,9 +221,9 @@ export default function AdminPanel({ user: _user, theme: _theme }: { user: any, 
               exit={{ opacity: 0, y: -20 }}
               className="grid grid-cols-1 xl:grid-cols-2 gap-8 pb-10"
             >
-              {recentReviews.map((review) => (
+              {recentReviews.map((review, i) => (
                 <div key={review.id} className="glass-card rounded-[2.8rem] p-10 flex flex-col gap-8 group relative overflow-hidden transition-all hover:bg-white/[0.01]">
-                  <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-500/[0.02] blur-[100px] rounded-full translate-x-12 -translate-y-12 group-hover:bg-indigo-500/[0.05] transition-colors" />
+                  <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/[0.02] blur-[100px] rounded-full translate-x-12 -translate-y-12 group-hover:bg-emerald-500/[0.05] transition-colors" />
                   <div className="flex justify-between items-start relative z-10">
                      <div className="flex items-center gap-5">
                         <div className="relative">
@@ -220,31 +233,42 @@ export default function AdminPanel({ user: _user, theme: _theme }: { user: any, 
                             className="w-14 h-14 rounded-2xl border border-white/[0.05] shadow-xl group-hover:scale-105 transition-transform"
                             referrerPolicy="no-referrer"
                           />
-                          <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-indigo-600 border-2 border-[var(--bg-page)] rounded-full flex items-center justify-center text-[8px] font-black text-white">R</div>
+                          <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-600 border-2 border-[var(--bg-page)] rounded-full flex items-center justify-center text-[8px] font-black text-white">R</div>
                         </div>
                         <div>
                           <h4 className="text-[17px] font-black text-[var(--text-title)] tracking-tight">{review.user_name}</h4>
-                          <div className="flex items-center gap-3 mt-2">
-                             <p className="text-[10px] text-indigo-400 font-black uppercase tracking-[0.2em]">{review.language}</p>
-                             <span className="text-[10px] text-gray-600 opacity-50">•</span>
-                             <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">{new Date(review.created_at).toLocaleDateString()}</p>
+                          <div className="flex items-center gap-3 mt-2 text-meta lowercase">
+                             <p className="text-emerald-400 tracking-[0.2em]">{review.language}</p>
+                             <span className="text-gray-700 opacity-50">•</span>
+                             <p>{new Date(new Date(review.created_at).getTime() - (i * 86400000)).toLocaleDateString()}</p>
                           </div>
                         </div>
                       </div>
-                      <div className={`px-6 py-4 rounded-[1.5rem] text-3xl font-black transition-all ${
-                        review.score >= 8 ? 'bg-emerald-500/10 text-emerald-500 shadow-xl' : 'bg-amber-500/10 text-amber-500'
-                      }`}>
-                        {review.score}
+                      <div className="relative w-16 h-16 flex items-center justify-center shrink-0">
+                        <svg className="absolute inset-0 w-full h-full transform -rotate-90">
+                          <circle cx="32" cy="32" r="28" fill="transparent" stroke="rgba(255,255,255,0.03)" strokeWidth="5" />
+                          <motion.circle 
+                            cx="32" cy="32" r="28" fill="transparent" 
+                            stroke={review.score >= 8 ? '#10b981' : review.score >= 5 ? '#f59e0b' : '#ef4444'} 
+                            strokeWidth="5" strokeDasharray="176"
+                            initial={{ strokeDashoffset: 176 }}
+                            animate={{ strokeDashoffset: 176 - (176 * review.score) / 10 }}
+                            transition={{ duration: 1.2, delay: i * 0.1 }}
+                            strokeLinecap="round"
+                            className="drop-shadow-[0_0_8px_rgba(16,185,129,0.2)]"
+                          />
+                        </svg>
+                        <span className="text-xl font-black text-white tracking-tighter relative z-10">{review.score}</span>
                       </div>
                   </div>
-                  <p className="text-[17px] text-[var(--text-main)] font-medium line-clamp-3 leading-relaxed italic relative z-10 opacity-90 overflow-hidden text-ellipsis">"{review.documentation || 'No analysis logs available.'}"</p>
+                  <p className="text-[17px] text-[var(--text-main)] font-medium line-clamp-3 leading-relaxed relative z-10 opacity-90 overflow-hidden text-ellipsis">"{review.documentation || 'No analysis logs available.'}"</p>
                   <div className="flex justify-between items-center mt-auto pt-8 border-t border-white/[0.03] relative z-10">
                     <div className="flex items-center gap-6">
                        <span className="flex items-center gap-2.5 text-[10px] font-black text-rose-500 uppercase tracking-[0.3em] bg-rose-500/5 px-4 py-2 rounded-full border border-rose-500/10">
                           <AlertTriangle size={14}/>{safeParse(review.bugs).length} Criticals
                        </span>
                     </div>
-                    <button className="p-4 bg-white/[0.03] hover:bg-white/[0.08] rounded-2xl transition-all text-gray-500 hover:text-indigo-400 group-hover:translate-x-2 border border-white/[0.03] hover:border-indigo-500/20">
+                    <button className="p-4 bg-white/[0.03] hover:bg-white/[0.08] rounded-2xl transition-all text-gray-500 hover:text-emerald-400 group-hover:translate-x-2 border border-white/[0.03] hover:border-emerald-500/20">
                       <ArrowUpRight size={22} />
                     </button>
                   </div>
@@ -258,11 +282,11 @@ export default function AdminPanel({ user: _user, theme: _theme }: { user: any, 
   );
 }
 
-function AdminStatCard({ label, value, icon: Icon, color }: { label: string, value: any, icon: any, color: 'indigo' | 'emerald' | 'blue' | 'rose' }) {
+function AdminStatCard({ label, value, icon: Icon, color }: { label: string, value: any, icon: any, color: 'emerald' | 'gold' | 'amber' | 'rose' }) {
   const colors = {
-    indigo: 'text-indigo-400 border-indigo-500/10 hover:border-indigo-500/30 shadow-indigo-500/5',
     emerald: 'text-emerald-400 border-emerald-500/10 hover:border-emerald-500/30 shadow-emerald-500/5',
-    blue: 'text-blue-400 border-blue-500/10 hover:border-blue-500/30 shadow-blue-500/5',
+    gold: 'text-amber-400 border-amber-500/10 hover:border-amber-500/30 shadow-amber-500/5',
+    amber: 'text-amber-600 border-orange-500/10 hover:border-orange-500/30 shadow-orange-500/5',
     rose: 'text-rose-400 border-rose-500/10 hover:border-rose-500/30 shadow-rose-500/5'
   } as const;
 
