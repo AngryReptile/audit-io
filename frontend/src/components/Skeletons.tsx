@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 
 export const CardSkeleton = () => (
   <div className="bg-[var(--glass-bg)] border border-[var(--glass-border)] rounded-[2.5rem] p-8 animate-pulse shadow-xl transition-colors duration-500">
-    <div className="w-14 h-14 bg-indigo-500/10 rounded-2xl mb-6 ring-1 ring-white/5" />
+    <div className="w-14 h-14 bg-emerald-500/10 rounded-2xl mb-6 ring-1 ring-white/5" />
     <div className="h-4 w-20 bg-gray-500/20 rounded-full mb-3" />
     <div className="h-8 w-32 bg-[var(--text-title)]/10 rounded-xl" />
   </div>
@@ -11,7 +11,7 @@ export const CardSkeleton = () => (
 export const DashboardSkeleton = () => (
   <div className="space-y-12 animate-in fade-in duration-700 pb-20">
     <div className="space-y-4">
-      <div className="h-4 w-48 bg-indigo-500/20 rounded-full" />
+      <div className="h-4 w-48 bg-emerald-500/20 rounded-full" />
       <div className="h-16 w-[500px] bg-[var(--text-title)]/10 rounded-3xl" />
       <div className="h-6 w-[400px] bg-gray-500/20 rounded-2xl" />
     </div>
