@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { GoogleLogin } from '@react-oauth/google';
 import { Zap } from 'lucide-react';
 
-export default function LoginView({ onLogin, onDemoLogin, theme }: { onLogin: any, onDemoLogin: () => void, theme: 'light' | 'dark' }) {
+export default function LoginView({ onLogin, theme }: { onLogin: any, theme: 'light' | 'dark' }) {
   return (
     <div className="h-screen w-screen flex items-center justify-center bg-[var(--bg-page)] relative overflow-hidden transition-colors duration-500">
       {/* Premium Background System */}
@@ -36,22 +36,8 @@ export default function LoginView({ onLogin, onDemoLogin, theme }: { onLogin: an
               shape="pill"
               size="large"
             />
-
-            <div className="relative flex items-center justify-center w-full py-2">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-white/5"></div>
-              </div>
-              <span className="relative px-3 text-[9px] font-black uppercase tracking-widest text-gray-600 bg-[var(--bg-page)] transition-colors duration-500">Trusted Access</span>
-            </div>
-
-            <button 
-              onClick={onDemoLogin}
-              className="w-full py-4 px-8 bg-white/[0.03] hover:bg-white/[0.08] text-[var(--text-title)] border border-white/[0.05] hover:border-emerald-500/30 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] transition-all active:scale-95 flex items-center justify-center gap-3 group"
-            >
-              Start Session as Guest <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 rounded text-[8px]">PRO</span>
-            </button>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-widest text-[#71717a] mt-6 italic opacity-60">No credit card required for preview</p>
+          <p className="text-[10px] font-black uppercase tracking-widest text-[#71717a] mt-6 italic opacity-60">Secure access via Google OAuth 2.0</p>
         </div>
       </motion.div>
     </div>

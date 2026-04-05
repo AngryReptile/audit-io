@@ -55,18 +55,6 @@ export default function App() {
     }
   };
 
-  const handleDemoLogin = () => {
-    const mockUser = {
-      id: 0,
-      google_id: 'demo_user_123',
-      email: 'demo@audit.io',
-      name: 'Demo Architect',
-      avatar: `https://ui-avatars.com/api/?name=Demo+Architect&background=10b981&color=fff`,
-      role: 'admin'
-    };
-    setUser(mockUser);
-    localStorage.setItem('user', JSON.stringify(mockUser));
-  };
 
   const logout = () => {
     googleLogout();
@@ -80,7 +68,7 @@ export default function App() {
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
       <Router>
         {!user ? (
-          <LoginView onLogin={handleLoginSuccess} onDemoLogin={handleDemoLogin} theme={theme} />
+          <LoginView onLogin={handleLoginSuccess} theme={theme} />
         ) : (
           <AppContent user={user} logout={logout} theme={theme} toggleTheme={toggleTheme} />
         )}
