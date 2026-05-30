@@ -28,3 +28,9 @@ CREATE TABLE IF NOT EXISTS reviews (
 
 -- Index for faster lookups
 CREATE INDEX IF NOT EXISTS idx_reviews_user_id ON reviews(user_id);
+
+-- Security: Enable Row Level Security (RLS) to prevent unauthorized public access
+-- The Node.js backend uses the postgres role which bypasses RLS.
+-- This hardens the database against external API access vulnerabilities.
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE reviews ENABLE ROW LEVEL SECURITY;

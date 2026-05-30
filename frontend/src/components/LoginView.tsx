@@ -1,8 +1,20 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { GoogleLogin } from '@react-oauth/google';
-import { Zap } from 'lucide-react';
+import { Zap, Play, Loader2 } from 'lucide-react';
 
-export default function LoginView({ onLogin, theme }: { onLogin: any, theme: 'light' | 'dark' }) {
+export default function LoginView({ onLogin, onDemoLogin, theme }: { onLogin: any, onDemoLogin: () => Promise<void>, theme: 'light' | 'dark' }) {
+  const [demoLoading, setDemoLoading] = useState(false);
+
+  const handleDemo = async () => {
+    setDemoLoading(true);
+    try {
+      await onDemoLogin();
+    } finally {
+      setDemoLoading(false);
+    }
+  };
+
   return (
     <div className="h-screen w-screen flex items-center justify-center bg-[var(--bg-page)] relative overflow-hidden transition-colors duration-500">
       {/* Premium Background System */}
@@ -37,6 +49,35 @@ export default function LoginView({ onLogin, theme }: { onLogin: any, theme: 'li
               size="large"
             />
           </div>
+
+          {/* Divider */}
+          <div className="flex items-center gap-4 px-4">
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+            <span className="text-[9px] font-black uppercase tracking-[0.3em] text-gray-600">or</span>
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+          </div>
+
+          {/* Demo Mode Button */}
+          <motion.button
+            onClick={handleDemo}
+            disabled={demoLoading}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="w-full relative group overflow-hidden px-8 py-4 rounded-2xl font-black text-[12px] uppercase tracking-[0.2em] transition-all duration-300 border border-emerald-500/20 bg-emerald-500/[0.06] text-emerald-400 hover:bg-emerald-500/[0.12] hover:border-emerald-500/40 hover:shadow-lg hover:shadow-emerald-500/10 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+          >
+            {/* Subtle animated glow */}
+            <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/5 to-emerald-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            
+            <span className="relative z-10 flex items-center gap-3">
+              {demoLoading ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                <Play size={16} className="fill-emerald-400 group-hover:scale-110 transition-transform" />
+              )}
+              {demoLoading ? 'Launching Demo...' : 'Try Demo Mode'}
+            </span>
+          </motion.button>
+
           <p className="text-[10px] font-black uppercase tracking-widest text-[#71717a] mt-6 italic opacity-60">Secure access via Google OAuth 2.0</p>
         </div>
       </motion.div>

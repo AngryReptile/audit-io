@@ -55,6 +55,19 @@ export default function App() {
     }
   };
 
+  const handleDemoLogin = async () => {
+    try {
+      const { data } = await axios.get('/api/auth/demo');
+      if (data.success) {
+        setUser(data.user);
+        localStorage.setItem('user', JSON.stringify(data.user));
+      }
+    } catch (err: any) {
+      console.error('Demo login failed:', err);
+      const msg = err.response?.data?.error || err.message || 'Demo login error';
+      alert(`Demo login failed: ${msg}`);
+    }
+  };
 
   const logout = () => {
     googleLogout();
@@ -68,7 +81,7 @@ export default function App() {
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
       <Router>
         {!user ? (
-          <LoginView onLogin={handleLoginSuccess} theme={theme} />
+          <LoginView onLogin={handleLoginSuccess} onDemoLogin={handleDemoLogin} theme={theme} />
         ) : (
           <AppContent user={user} logout={logout} theme={theme} toggleTheme={toggleTheme} />
         )}
@@ -249,15 +262,23 @@ function Sidebar({ user, logout, isOpen, setIsOpen, theme, toggleTheme, isMobile
 
           <div className="p-3 bg-white/[0.03] rounded-2xl border border-white/[0.02] hover:border-emerald-500/20 transition-all cursor-pointer group">
              <div className="flex items-center gap-3 relative z-10 transition-transform group-hover:scale-[1.01]">
-               <img 
-                 src={user.avatar} 
-                 alt="" 
-                 className="w-10 h-10 rounded-full border border-white/10 shadow-xl shrink-0"
-                 referrerPolicy="no-referrer"
-               />
+               {user.isDemo ? (
+                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-amber-500 flex items-center justify-center shadow-xl shrink-0 ring-1 ring-white/10">
+                   <span className="text-white font-black text-sm">D</span>
+                 </div>
+               ) : (
+                 <img 
+                   src={user.avatar} 
+                   alt="" 
+                   className="w-10 h-10 rounded-full border border-white/10 shadow-xl shrink-0"
+                   referrerPolicy="no-referrer"
+                 />
+               )}
                <div className={`overflow-hidden transition-all duration-300 ${(isOpen || isMobileOpen) ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4 w-0'}`}>
-                 <p className="text-[13px] font-bold text-[var(--text-title)] truncate leading-tight mb-0.5">{user.name.split(' ')[0]}</p>
-                 <p className="text-[9px] font-black text-gray-500 truncate uppercase tracking-widest opacity-80 italic">Pro Access</p>
+                 <p className="text-[13px] font-bold text-[var(--text-title)] truncate leading-tight mb-0.5">{user.name?.split(' ')[0] || 'Demo'}</p>
+                 <p className={`text-[9px] font-black truncate uppercase tracking-widest opacity-80 italic ${user.isDemo ? 'text-emerald-400' : 'text-gray-500'}`}>
+                   {user.isDemo ? 'Demo Mode' : 'Pro Access'}
+                 </p>
                </div>
              </div>
           </div>

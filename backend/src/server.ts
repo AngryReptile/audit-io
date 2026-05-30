@@ -5,6 +5,7 @@ import pg from 'pg';
 import { OAuth2Client } from 'google-auth-library';
 import { AIService } from './ai.js';
 import { GitHubService } from './github.js';
+import crypto from 'crypto';
 
 dotenv.config();
 
@@ -80,6 +81,32 @@ app.post('/api/auth/google', async (req, res) => {
   }
 });
 
+// --- Demo Auth ---
+app.get('/api/auth/demo', async (req, res) => {
+  try {
+    const DEMO_GOOGLE_ID = 'demo_user_audit_io';
+    let result = await pool.query('SELECT * FROM users WHERE google_id = $1', [DEMO_GOOGLE_ID]);
+
+    if (result.rows.length === 0) {
+      result = await pool.query(
+        'INSERT INTO users (google_id, email, name, avatar, role) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+        [
+          DEMO_GOOGLE_ID,
+          'demo@audit.io',
+          'Demo User',
+          `https://api.dicebear.com/7.x/shapes/svg?seed=auditio&backgroundColor=10b981`,
+          'admin'
+        ]
+      );
+    }
+
+    res.json({ success: true, user: { ...result.rows[0], isDemo: true } });
+  } catch (error: any) {
+    console.error('Demo auth error:', error);
+    res.status(500).json({ error: error.message || 'Demo login failed' });
+  }
+});
+
 app.post('/api/review', async (req, res) => {
   const { code, language: providedLanguage, userId } = req.body;
   if (!code) return res.status(400).json({ error: 'Code is required for analysis' });
@@ -123,8 +150,43 @@ app.get('/api/history/:userId', async (req, res) => {
 });
 
 app.post('/api/github/fetch', async (req, res) => {
-// ...
-// (rest of the file remains same, but I need to make sure I don't break the stats endpoint too)
+  const { url } = req.body;
+  try {
+    const match = url.match(/github\.com\/([^/]+)\/([^/]+)/);
+    if (!match) return res.status(400).json({ error: 'Invalid GitHub URL' });
+    
+    const [, owner, repo] = match;
+    const contents = await GitHubService.fetchRepoContents(owner, repo);
+    res.json(contents);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// --- Repo fetch (used by Repo Browser page) ---
+app.post('/api/repo/fetch', async (req, res) => {
+  const { url } = req.body;
+  if (!url) return res.status(400).json({ error: 'URL is required' });
+
+  try {
+    // Support formats: "facebook/react", "https://github.com/facebook/react"
+    let owner: string, repo: string;
+    const ghMatch = url.match(/github\.com\/([^/]+)\/([^/\s?#]+)/);
+    if (ghMatch) {
+      owner = ghMatch[1];
+      repo = ghMatch[2].replace(/\.git$/, '');
+    } else if (/^[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+$/.test(url.trim())) {
+      [owner, repo] = url.trim().split('/');
+    } else {
+      return res.status(400).json({ error: 'Invalid format. Use owner/repo or a GitHub URL.' });
+    }
+
+    const result = await GitHubService.fetchRepoTree(owner, repo);
+    res.json(result);
+  } catch (error: any) {
+    console.error('Repo fetch error:', error.message);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 app.get('/api/stats/:userId', async (req, res) => {

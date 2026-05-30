@@ -78,3 +78,177 @@
 ```bash
 git clone https://github.com/your-username/audit-io.git
 cd audit-io
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+This installs dependencies for both the `frontend` and `backend` workspaces.
+
+### 3. Set Up the Database
+
+Run the SQL schema against your Supabase database:
+
+```bash
+# Connect to your Supabase project's SQL editor and run:
+psql -h <your-supabase-host> -U postgres -d postgres -f backend/schema.sql
+```
+
+Or paste the contents of `backend/schema.sql` directly into the **Supabase SQL Editor**.
+
+### 4. Configure Environment Variables
+
+**Backend** — create `backend/.env` from the example:
+
+```bash
+cp backend/.env.example backend/.env
+```
+
+Then fill in your values:
+
+```env
+PORT=3001
+FRONTEND_URL=http://localhost:5173
+
+# PostgreSQL connection (from Supabase → Settings → Database)
+DB_PASSWORD=your_supabase_db_password
+
+# Google OAuth (from Google Cloud Console → APIs & Services → Credentials)
+GOOGLE_CLIENT_ID=your_google_client_id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+
+# Gemini AI (from https://aistudio.google.com/app/apikey)
+GEMINI_API_KEY=your_gemini_api_key
+```
+
+**Frontend** — create `frontend/.env`:
+
+```env
+VITE_API_BASE=http://localhost:3001
+VITE_GOOGLE_CLIENT_ID=your_google_client_id.apps.googleusercontent.com
+```
+
+### 5. Run Locally
+
+Open two terminals:
+
+```bash
+# Terminal 1 — Backend
+cd backend
+npm run dev
+```
+
+```bash
+# Terminal 2 — Frontend
+cd frontend
+npm run dev
+```
+
+The app will be available at **`http://localhost:5173`**.
+
+---
+
+## 📁 Project Structure
+
+```
+audit-io/
+├── frontend/                 # React + Vite application
+│   └── src/
+│       ├── components/
+│       │   ├── Dashboard.tsx       # Stats overview & quick actions
+│       │   ├── ManualReview.tsx    # Paste-code review interface
+│       │   ├── RepoReview.tsx      # GitHub repo browser + file audit
+│       │   ├── HistoryView.tsx     # Personal review history
+│       │   ├── AdminPanel.tsx      # Admin control center
+│       │   ├── LoginView.tsx       # Google OAuth login screen
+│       │   └── Skeletons.tsx       # Loading skeleton components
+│       ├── context/
+│       │   └── ReviewContext.tsx   # Shared review state
+│       └── App.tsx                 # Root layout, routing & sidebar
+│
+├── backend/                  # Express + TypeScript API
+│   └── src/
+│       ├── server.ts               # API routes & Express setup
+│       ├── ai.ts                   # Gemini AI service with fallback logic
+│       └── github.ts              # GitHub REST API integration
+│   ├── schema.sql                  # PostgreSQL schema
+│   └── .env.example               # Environment variable reference
+│
+├── vercel.json               # Vercel monorepo deployment config
+└── package.json              # Root workspace config
+```
+
+---
+
+## 🔌 API Reference
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/auth/google` | Authenticate with a Google ID token |
+| `POST` | `/api/review` | Submit code for AI analysis |
+| `GET` | `/api/history/:userId` | Fetch a user's past reviews |
+| `GET` | `/api/stats/:userId` | Get aggregated stats for a user |
+| `POST` | `/api/github/fetch` | Fetch public GitHub repo contents |
+| `POST` | `/api/github/file` | Fetch and decode a single GitHub file |
+| `GET` | `/api/admin/stats` | Platform-wide statistics (admin) |
+| `GET` | `/api/admin/users` | List all users with review counts (admin) |
+| `GET` | `/api/admin/reviews/recent` | Get the 50 most recent reviews (admin) |
+
+---
+
+## 🗄️ Database Schema
+
+```sql
+-- Users table (Google OAuth)
+CREATE TABLE users (
+    id          SERIAL PRIMARY KEY,
+    google_id   TEXT UNIQUE NOT NULL,
+    email       TEXT UNIQUE NOT NULL,
+    name        TEXT,
+    avatar      TEXT,
+    role        TEXT DEFAULT 'user',   -- 'user' | 'admin'
+    created_at  TIMESTAMPTZ DEFAULT now()
+);
+
+-- Reviews table (AI analysis results)
+CREATE TABLE reviews (
+    id           SERIAL PRIMARY KEY,
+    user_id      INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    code_input   TEXT NOT NULL,
+    language     TEXT,
+    github_url   TEXT,
+    score        INTEGER CHECK (score >= 0 AND score <= 10),
+    bugs         JSONB,        -- [{ severity, description, line }]
+    suggestions  JSONB,        -- [{ before, after, description }]
+    documentation TEXT,
+    created_at   TIMESTAMPTZ DEFAULT now()
+);
+```
+
+Row-Level Security (RLS) is enabled on both tables — all data access goes exclusively through the trusted backend.
+
+---
+
+## ☁️ Deployment (Vercel)
+
+This project is configured as a **Vercel monorepo**.
+
+1. Push your code to GitHub.
+2. Import the repository in [Vercel](https://vercel.com/new).
+3. Add all environment variables from both `.env` files to your Vercel project settings.
+4. Vercel will automatically detect and deploy both the frontend and backend.
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License**.
+
+---
+
+<div align="center">
+  <p>Built with ⚡ by <strong>Audit.io</strong></p>
+</div>
